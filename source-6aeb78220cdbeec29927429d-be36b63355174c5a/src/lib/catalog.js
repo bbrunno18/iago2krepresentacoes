@@ -11,6 +11,7 @@ export const FALLBACK_BRANDS = [
   { id: "allmix", name: "Allmix Utilidades", image_url: "/brands/allmix.jpg" },
   { id: "interponte", name: "Interponte", image_url: "/brands/interponte.jpg" },
   { id: "face-beautiful", name: "Face Beautiful Profissional", image_url: "/brands/face-beautiful.jpg" },
+  { id: "rio-tijucas", name: "Rio Tijucas", image_url: "/brands/rio-tijucas.jpg" },
 ].map((b, i) => ({ description: "", category_id: "", catalog_url: "", featured: true, order: i + 1, ...b }));
 
 // Categorias exibidas no site enquanto a API (/api/categories) não existe ou está vazia.
