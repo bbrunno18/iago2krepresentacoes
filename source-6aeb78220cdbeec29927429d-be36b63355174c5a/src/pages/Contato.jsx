@@ -2,7 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Loader2, MessageCircle, Phone, Mail, MapPin, Clock, Instagram, Facebook, Send } from "lucide-react";
 import { toast } from "sonner";
-import { api, formatApiError } from "@/lib/api";
+import { formatApiError } from "@/lib/api";
+import { submitRequest } from "@/lib/requests";
 import { useSettings, waLink, usePageMeta } from "@/lib/site";
 import { Reveal, MaskedLine, EASE } from "@/components/site/Reveal";
 
@@ -34,7 +35,7 @@ export default function Contato() {
     }
     setStatus("sending");
     try {
-      await api.post("/requests", { type: "contact", ...form, consent });
+      await submitRequest({ type: "contact", ...form, consent, origin: "Página Fale conosco" });
       setStatus("done");
     } catch (err) {
       setStatus("idle");

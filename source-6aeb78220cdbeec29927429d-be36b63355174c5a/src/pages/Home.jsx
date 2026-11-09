@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { api, formatApiError } from "@/lib/api";
+import { submitRequest } from "@/lib/requests";
 import { useSettings, waLink, usePageMeta, brandMonogram } from "@/lib/site";
 import { Reveal, MaskedLine, SectionHead, EASE } from "@/components/site/Reveal";
 import BrandMarquee from "@/components/site/BrandMarquee";
@@ -53,7 +54,7 @@ function CatalogMiniForm() {
     }
     setStatus("sending");
     try {
-      await api.post("/requests", { type: "catalog", name: form.name, whatsapp: form.whatsapp, consent, message: "Solicitação rápida de catálogo (home)." });
+      await submitRequest({ type: "catalog", name: form.name, whatsapp: form.whatsapp, consent, message: "Solicitação rápida de catálogo (home).", origin: "Home — Resposta rápida" });
       setStatus("done");
     } catch (err) {
       setStatus("idle");

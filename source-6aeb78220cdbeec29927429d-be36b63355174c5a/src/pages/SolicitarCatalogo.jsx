@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Check, Loader2, MessageCircle, ArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
 import { api, formatApiError } from "@/lib/api";
+import { submitRequest } from "@/lib/requests";
 import { useSettings, waLink, usePageMeta } from "@/lib/site";
 import { Reveal, MaskedLine, EASE } from "@/components/site/Reveal";
 
@@ -54,7 +55,7 @@ export default function SolicitarCatalogo() {
     }
     setStatus("sending");
     try {
-      await api.post("/requests", { type: "catalog", ...form, interests, consent });
+      await submitRequest({ type: "catalog", ...form, interests, consent, origin: "Página Solicitar catálogo" });
       setStatus("done");
       window.scrollTo(0, 0);
     } catch (err) {
