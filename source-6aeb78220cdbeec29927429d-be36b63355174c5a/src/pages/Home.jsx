@@ -19,7 +19,7 @@ const GOODS_IMG = "https://images.pexels.com/photos/28846858/pexels-photo-288468
 
 const CHAPTERS = [
   { n: "01", t: "Curadoria de produtos", d: "Selecionamos marcas e itens com real potencial de giro para o seu ponto de venda — nada de catálogo inflado." },
-  { n: "02", t: "Atendimento consultivo", d: "Você fala com quem entende de varejo e indica o que faz sentido para o perfil da sua loja." },
+  { n: "02", t: "Atendimento consultivo", d: "Você fala com quem entende de varejo e atacado e indica o que faz sentido para o perfil do seu negócio." },
   { n: "03", t: "Catálogo organizado", d: "Marcas, categorias e novidades reunidas em um só lugar, fáceis de consultar e de pedir." },
   { n: "04", t: "Novidades e reposição", d: "Lançamentos e reposições apresentados com agilidade, para a sua loja nunca ficar parada." },
   { n: "05", t: "Suporte ao lojista", d: "Acompanhamento próximo antes, durante e depois do pedido. Relacionamento de longo prazo." },
@@ -444,7 +444,7 @@ export default function Home() {
       <section className="py-24 lg:py-36 bg-white border-y border-[#E2E8F0]" data-testid="brands-section">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
-            <SectionHead eyebrow="Marcas representadas" title="Um portfólio construído para o varejo." />
+            <SectionHead eyebrow="Marcas representadas" title="Um portfólio construído para lojas e distribuidoras, no varejo e no atacado." />
             <Reveal delay={0.2}>
               <Link to="/marcas" data-testid="brands-see-all"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-ink underline-gold pb-1 hover:text-gold-dark transition-colors duration-300">
@@ -656,7 +656,7 @@ export default function Home() {
           </Reveal>
           <Reveal delay={0.1}>
             <h2 className="font-display font-extrabold tracking-tighter leading-[0.95] text-4xl md:text-6xl lg:text-7xl max-w-4xl mx-auto text-balance">
-              Sua loja merece um parceiro que entende de varejo.
+              Sua loja ou distribuidora merece um parceiro que entende de varejo e atacado.
             </h2>
           </Reveal>
           <Reveal delay={0.2}>
