@@ -233,7 +233,7 @@ export default function Home() {
               initial={{ clipPath: "inset(100% 0 0 0)" }} animate={{ clipPath: "inset(0% 0 0 0)" }}
               transition={{ duration: 1.2, delay: 0.4, ease: EASE }}
               className="absolute inset-0 overflow-hidden">
-              <motion.img src={HERO_IMG} alt="Corredor de centro de distribuição com prateleiras organizadas de produtos"
+              <motion.img src={HERO_IMG} onError={(e) => { if (e.currentTarget.src !== GOODS_IMG) e.currentTarget.src = GOODS_IMG; }} alt="Corredor de centro de distribuição com prateleiras organizadas de produtos"
                 style={{ y: imgY }} className="w-full h-[120%] object-cover scale-110" loading="eager" />
               <div className="absolute inset-0 bg-ink/15" />
             </motion.div>
