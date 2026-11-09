@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useInView, animate } from "framer-motion";
 import {
   ArrowUpRight, ArrowRight, MessageCircle, Store, UtensilsCrossed, Zap,
   Sparkles, Gift, Paintbrush, ShoppingCart, Boxes, Check, Loader2, MapPin, Clock, Phone,
@@ -8,6 +8,7 @@ import {
 import { toast } from "sonner";
 import { api, formatApiError } from "@/lib/api";
 import { submitRequest } from "@/lib/requests";
+import { fetchBrands, fetchCategories } from "@/lib/catalog";
 import { useSettings, waLink, usePageMeta, brandMonogram } from "@/lib/site";
 import { Reveal, MaskedLine, SectionHead, EASE } from "@/components/site/Reveal";
 import BrandMarquee from "@/components/site/BrandMarquee";
@@ -35,6 +36,25 @@ const SEGMENTS = [
   { icon: ShoppingCart, label: "Supermercados" },
   { icon: Boxes, label: "Atacadistas e distribuidores" },
 ];
+
+// Número que "conta" de 0 até o valor final quando entra na tela.
+function CountUp({ to, className, testid }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return undefined;
+    const controls = animate(0, to, { duration: 1.9, ease: EASE, onUpdate: (v) => setValue(Math.round(v)) });
+    return () => controls.stop();
+  }, [inView, to]);
+
+  return (
+    <span ref={ref} className={className} data-testid={testid} aria-label={`Mais de ${to.toLocaleString("pt-BR")}`}>
+      +{value.toLocaleString("pt-BR")}
+    </span>
+  );
+}
 
 function CatalogMiniForm() {
   const settings = useSettings();
@@ -130,16 +150,16 @@ export default function Home() {
   usePageMeta("", "Representação comercial e distribuição de produtos para lojistas, atacadistas e empresas. Conheça as marcas representadas pela 2K Representações e solicite o catálogo.");
 
   useEffect(() => {
-    Promise.all([api.get("/brands"), api.get("/categories"), api.get("/faqs")])
-      .then(([b, c, f]) => {
-        setBrands(b.data);
-        setCategories(c.data.filter((x) => x.name !== "Outras Categorias"));
-        setFaqs(f.data.slice(0, 4));
-      })
+    // Cada bloco carrega de forma independente: se um falhar, os outros continuam.
+    fetchBrands().then(setBrands);
+    fetchCategories().then((data) => setCategories(data.filter((x) => x.name !== "Outras Categorias")));
+    api.get("/faqs")
+      .then(({ data }) => Array.isArray(data) && setFaqs(data.slice(0, 4)))
       .catch(() => {});
   }, []);
 
   const catName = (id) => categories.find((c) => c.id === id)?.name || "";
+  const itemsTotal = Number(String(settings.stat_items || "").replace(/\D/g, "")) || 20000;
   const featured = brands.filter((b) => b.featured).slice(0, 8);
   const brandsCount = (catId) => brands.filter((b) => b.category_id === catId).length;
 
@@ -239,6 +259,67 @@ export default function Home() {
       {/* MARQUEE */}
       <BrandMarquee items={brands.map((b) => b.name)} />
 
+      {/* QUEM SOMOS */}
+      <section className="py-24 lg:py-32 bg-white border-b border-[#E2E8F0]" data-testid="about-home-section">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="lg:col-span-7">
+            <Reveal>
+              <p className="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-gold-dark mb-6">
+                <span className="w-10 h-px bg-gold-dark" /> Quem somos
+              </p>
+              <h2 className="font-display font-extrabold tracking-tighter leading-[0.98] text-ink text-[clamp(2.2rem,4.6vw,3.8rem)] text-balance">
+                Mais que representação. <span className="text-gold-dark font-editorial italic font-medium">Uma parceria</span> para o lojista.
+              </h2>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="mt-8 text-base md:text-lg text-slate2 leading-relaxed max-w-2xl">
+                Criada em 2016, a {settings.company_name} é uma empresa sólida e experiente, construída sobre relacionamento
+                e confiança com quem vende. Atuamos como a ponte entre marcas e lojistas, facilitando a vida de quem compra
+                para revender.
+              </p>
+              <p className="mt-5 text-base md:text-lg text-slate2 leading-relaxed max-w-2xl">
+                Com {new Date().getFullYear() - 2016} anos de mercado, atendemos grandes lojistas do Amazonas e de Roraima,
+                reunindo variedade, atendimento próximo e experiência comercial para ajudar você a encontrar os produtos certos
+                para o seu varejo.
+              </p>
+            </Reveal>
+            <Reveal delay={0.18}>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <Link to="/solicitar-catalogo" data-testid="about-home-cta"
+                  className="inline-flex items-center gap-2 bg-gold text-ink text-sm font-semibold px-8 py-4 hover:bg-ink hover:text-white transition-colors duration-300">
+                  Quero ser cliente <ArrowUpRight size={16} />
+                </Link>
+                <Link to="/sobre"
+                  className="inline-flex items-center gap-2 border border-ink/20 text-ink text-sm font-semibold px-8 py-4 hover:border-gold hover:text-gold-dark transition-colors duration-300">
+                  Conheça nossa história
+                </Link>
+              </div>
+            </Reveal>
+          </div>
+          <div className="lg:col-span-5 grid grid-cols-2 gap-px bg-[#E2E8F0] border border-[#E2E8F0]" data-testid="about-home-stats">
+            {[
+              { v: "2016", l: "ano de fundação", s: "Desde" },
+              { v: `${new Date().getFullYear() - 2016}+`, l: "anos de experiência" },
+              { v: "AM · RR", l: "Amazonas e Roraima", wide: true },
+            ].map((x, i) => (
+              <Reveal key={x.l} delay={i * 0.08} className={`bg-[#FAFAFA] ${x.wide ? "col-span-2" : ""}`}>
+                <div className="p-8 lg:p-10 text-center">
+                  {x.s && <span className="block text-[10px] uppercase tracking-[0.3em] text-gold-dark mb-1">{x.s}</span>}
+                  <span className="block font-display font-extrabold text-4xl lg:text-5xl text-ink tracking-tighter">{x.v}</span>
+                  <span className="block text-xs uppercase tracking-[0.18em] text-slate2 mt-2">{x.l}</span>
+                </div>
+              </Reveal>
+            ))}
+            <Reveal delay={0.3} className="bg-ink col-span-2">
+              <div className="p-8 lg:p-10 text-center">
+                <span className="block font-display font-extrabold text-3xl lg:text-4xl text-gold tracking-tighter">+20.000 itens</span>
+                <span className="block text-xs uppercase tracking-[0.18em] text-white/60 mt-2">para abastecer grandes lojistas</span>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* MANIFESTO */}
       <section className="bg-ink text-white dark-grid-lines noise-overlay relative py-24 lg:py-36" data-testid="manifesto-section">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
@@ -284,13 +365,78 @@ export default function Home() {
                   <div>
                     <h3 className="font-display font-bold text-xl lg:text-2xl tracking-tight text-ink group-hover:text-white transition-colors duration-500">{c.name}</h3>
                     <p className="text-xs text-slate2 group-hover:text-white/50 mt-2 uppercase tracking-[0.16em] transition-colors duration-500">
-                      {brandsCount(c.id)} {brandsCount(c.id) === 1 ? "marca" : "marcas"}
+                      {brandsCount(c.id) > 0
+                        ? `${brandsCount(c.id)} ${brandsCount(c.id) === 1 ? "marca" : "marcas"}`
+                        : "Ver produtos"}
                     </p>
                   </div>
                 </Link>
               </Reveal>
             ))}
+            {categories.length > 0 && (
+              <Reveal delay={categories.length * 0.05} className="bg-ink">
+                <Link to="/produtos" data-testid="category-card-all"
+                  className="group flex flex-col justify-between h-full p-8 lg:p-10 min-h-[220px] bg-ink hover:bg-gold transition-colors duration-500">
+                  <ArrowUpRight size={20} className="text-gold group-hover:text-ink group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-500" />
+                  <h3 className="font-display font-bold text-xl lg:text-2xl tracking-tight text-white group-hover:text-ink transition-colors duration-500">
+                    Ver catálogo completo
+                  </h3>
+                </Link>
+              </Reveal>
+            )}
           </div>
+        </div>
+      </section>
+
+      {/* DESTAQUE: +20 MIL ITENS */}
+      <section className="bg-ink text-white dark-grid-lines noise-overlay relative overflow-hidden py-24 lg:py-36" data-testid="items-highlight-section">
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(197,160,89,0.16),transparent_62%)]" />
+        <div className="relative z-10 max-w-[1100px] mx-auto px-6 lg:px-12 text-center">
+          <Reveal>
+            <CountUp to={itemsTotal} testid="items-highlight-number"
+              className="block font-display font-extrabold text-gold tracking-tighter leading-none text-[clamp(4.5rem,17vw,11rem)]" />
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="mt-4 text-xs md:text-sm font-semibold uppercase tracking-[0.32em] text-white/60">Itens no nosso portfólio</p>
+          </Reveal>
+          <Reveal delay={0.18}>
+            <h2 className="mt-10 font-display font-extrabold tracking-tighter leading-[0.98] text-3xl md:text-5xl lg:text-6xl text-balance max-w-4xl mx-auto">
+              Do básico ao diferente: tudo para abastecer a sua loja.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.26}>
+            <p className="mt-6 text-base md:text-lg text-white/60 leading-relaxed max-w-2xl mx-auto">
+              {settings.company_name} reúne mais de {itemsTotal.toLocaleString("pt-BR")} itens de marcas parceiras.
+              Conte o perfil do seu negócio e montamos o mix ideal para você.
+            </p>
+          </Reveal>
+          {categories.length > 0 && (
+            <Reveal delay={0.32}>
+              <ul className="mt-10 flex flex-wrap justify-center gap-2.5" aria-label="Categorias de produtos" data-testid="items-highlight-categories">
+                {categories.map((c) => (
+                  <li key={c.id}>
+                    <Link to={`/produtos?categoria=${c.id}`}
+                      className="inline-block border border-white/20 text-white/70 text-[11px] font-semibold uppercase tracking-[0.14em] px-4 py-2.5 hover:border-gold hover:text-gold transition-colors duration-300">
+                      {c.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          )}
+          <Reveal delay={0.38}>
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+              <Link to="/produtos" data-testid="items-highlight-cta"
+                className="inline-flex items-center gap-2 bg-gold text-ink font-semibold px-8 py-4 text-sm hover:bg-white transition-colors duration-300">
+                Conhecer os produtos <ArrowUpRight size={16} strokeWidth={2.5} />
+              </Link>
+              <a href={waLink(settings, "Olá! Vi que vocês têm mais de 20 mil itens e gostaria de conhecer os produtos.")}
+                target="_blank" rel="noopener noreferrer" data-testid="items-highlight-whatsapp"
+                className="inline-flex items-center gap-2 border border-white/25 text-white font-semibold px-8 py-4 text-sm hover:border-gold hover:text-gold transition-colors duration-300">
+                <MessageCircle size={16} /> Falar no WhatsApp
+              </a>
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -311,12 +457,19 @@ export default function Home() {
               <Reveal key={b.id} delay={i * 0.04} className="bg-white">
                 <Link to={`/produtos?marca=${b.id}`} data-testid={`brand-card-${i}`}
                   className="group flex flex-col items-start justify-between p-8 min-h-[200px] hover:bg-[#FAFAFA] transition-colors duration-500 h-full">
-                  <span className="w-12 h-12 border border-ink/15 group-hover:border-gold group-hover:bg-gold group-hover:text-ink flex items-center justify-center font-display font-extrabold text-ink text-sm tracking-tight transition-colors duration-500">
-                    {brandMonogram(b.name)}
-                  </span>
+                  {b.image_url ? (
+                    <img src={b.image_url} alt={`Logo da marca ${b.name}`} loading="lazy"
+                      className="w-16 h-16 object-cover border border-ink/10 group-hover:border-gold transition-colors duration-500" />
+                  ) : (
+                    <span className="w-12 h-12 border border-ink/15 group-hover:border-gold group-hover:bg-gold group-hover:text-ink flex items-center justify-center font-display font-extrabold text-ink text-sm tracking-tight transition-colors duration-500">
+                      {brandMonogram(b.name)}
+                    </span>
+                  )}
                   <div className="mt-8">
                     <h3 className="font-display font-bold text-lg tracking-tight text-ink leading-tight">{b.name}</h3>
-                    <p className="text-xs text-slate2 mt-1.5 uppercase tracking-[0.14em]">{catName(b.category_id) || "Categoria em definição"}</p>
+                    {catName(b.category_id) && (
+                      <p className="text-xs text-slate2 mt-1.5 uppercase tracking-[0.14em]">{catName(b.category_id)}</p>
+                    )}
                   </div>
                 </Link>
               </Reveal>

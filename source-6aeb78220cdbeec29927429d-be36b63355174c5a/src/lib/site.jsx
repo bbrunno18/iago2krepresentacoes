@@ -16,10 +16,11 @@ export const FALLBACK_SETTINGS = {
   hero_headline: "Produtos que movimentam o seu negócio.",
   hero_sub: "Conectamos lojistas, atacadistas e empresas às melhores marcas, produtos e oportunidades comerciais do mercado — com atendimento consultivo e ágil.",
   about_text: "",
+  stat_items: "20000",
   stat_brands: "10",
   stat_categories: "30",
   stat_regions: "",
-  stat_years: "",
+  stat_years: "10",
   whatsapp_message: "Olá! Vim pelo site de Icaro Almeida e 2K Representações e gostaria de mais informações.",
   catalog_drive_url: "",
 };

@@ -19,6 +19,7 @@ const FIELDS = [
   { key: "hero_headline", label: "Headline da home", textarea: true },
   { key: "hero_sub", label: "Subheadline da home", textarea: true },
   { key: "about_text", label: "Texto institucional (página Sobre)", textarea: true },
+  { key: "stat_items", label: "Destaque da home: quantidade de itens (somente números, ex.: 20000)" },
   { key: "stat_brands", label: "Estatística: marcas representadas (ex.: 10)" },
   { key: "stat_categories", label: "Estatística: categorias atendidas (ex.: 30)" },
   { key: "stat_regions", label: "Estatística: regiões atendidas (ex.: 5)" },

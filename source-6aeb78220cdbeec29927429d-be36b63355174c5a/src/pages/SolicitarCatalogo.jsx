@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Loader2, MessageCircle, ArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
-import { api, formatApiError } from "@/lib/api";
+import { formatApiError } from "@/lib/api";
 import { submitRequest } from "@/lib/requests";
+import { fetchCategories } from "@/lib/catalog";
 import { useSettings, waLink, usePageMeta } from "@/lib/site";
 import { Reveal, MaskedLine, EASE } from "@/components/site/Reveal";
 
@@ -29,7 +30,7 @@ export default function SolicitarCatalogo() {
   usePageMeta("Solicite um Catálogo", "Solicite o catálogo completo da 2K Representações: marcas, categorias e condições comerciais para lojistas, atacadistas e empresas.");
 
   useEffect(() => {
-    api.get("/categories").then(({ data }) => setCategories(data)).catch(() => {});
+    fetchCategories().then(setCategories);
   }, []);
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });

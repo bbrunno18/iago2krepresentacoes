@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight, MessageCircle, PackageSearch, BookOpen } from "lucide-react";
 import { api } from "@/lib/api";
+import { fetchBrands } from "@/lib/catalog";
 import { useSettings, waLink, usePageMeta, brandMonogram } from "@/lib/site";
 import { Reveal, MaskedLine } from "@/components/site/Reveal";
 
@@ -16,13 +17,13 @@ export default function Marcas() {
   usePageMeta("Marcas Representadas", "Conheça as marcas representadas pela 2K Representações: utilidades domésticas, materiais elétricos, maquiagem, vidros, incensos, limpeza e mais para lojistas e atacadistas.");
 
   useEffect(() => {
-    Promise.all([api.get("/brands"), api.get("/categories")])
-      .then(([b, c]) => { setBrands(b.data); setCategories(c.data); })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    api.get("/categories")
+      .then(({ data }) => Array.isArray(data) && setCategories(data))
+      .catch(() => {});
+    fetchBrands().then(setBrands).finally(() => setLoading(false));
   }, []);
 
-  const catName = (id) => categories.find((c) => c.id === id)?.name || "Categoria em definição";
+  const catName = (id) => categories.find((c) => c.id === id)?.name || "";
 
   const filtered = useMemo(
     () => (filter === "todas" ? brands : brands.filter((b) => b.category_id === filter)),
@@ -43,29 +44,31 @@ export default function Marcas() {
           </h1>
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.6 }}
             className="mt-6 text-base md:text-lg text-slate2 max-w-2xl leading-relaxed">
-            {settings.stat_brands || brands.length} marcas representadas, organizadas por categoria. Filtre, conheça e solicite o catálogo de cada uma.
+            {brands.length || settings.stat_brands} marcas representadas, organizadas por categoria. Filtre, conheça e solicite o catálogo de cada uma.
           </motion.p>
         </div>
       </section>
 
       <section className="pb-24 lg:pb-36">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-          <div className="flex flex-wrap gap-2 mb-12" role="group" aria-label="Filtrar marcas por categoria" data-testid="brands-filter">
-            <button onClick={() => setFilter("todas")} data-testid="brands-filter-all"
-              className={`px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] border transition-colors duration-300 ${
-                filter === "todas" ? "bg-ink text-white border-ink" : "bg-white text-slate2 border-[#E2E8F0] hover:border-gold hover:text-ink"
-              }`}>
-              Todas
-            </button>
-            {categories.map((c) => (
-              <button key={c.id} onClick={() => setFilter(c.id)} data-testid={`brands-filter-${c.id}`}
+          {categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-12" role="group" aria-label="Filtrar marcas por categoria" data-testid="brands-filter">
+              <button onClick={() => setFilter("todas")} data-testid="brands-filter-all"
                 className={`px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] border transition-colors duration-300 ${
-                  filter === c.id ? "bg-ink text-white border-ink" : "bg-white text-slate2 border-[#E2E8F0] hover:border-gold hover:text-ink"
+                  filter === "todas" ? "bg-ink text-white border-ink" : "bg-white text-slate2 border-[#E2E8F0] hover:border-gold hover:text-ink"
                 }`}>
-                {c.name}
+                Todas
               </button>
-            ))}
-          </div>
+              {categories.map((c) => (
+                <button key={c.id} onClick={() => setFilter(c.id)} data-testid={`brands-filter-${c.id}`}
+                  className={`px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] border transition-colors duration-300 ${
+                    filter === c.id ? "bg-ink text-white border-ink" : "bg-white text-slate2 border-[#E2E8F0] hover:border-gold hover:text-ink"
+                  }`}>
+                  {c.name}
+                </button>
+              ))}
+            </div>
+          )}
 
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#E2E8F0] border border-[#E2E8F0]">
@@ -86,20 +89,20 @@ export default function Marcas() {
                   <article className="group p-8 lg:p-10 flex flex-col h-full min-h-[300px] hover:bg-[#FAFAFA] transition-colors duration-500" data-testid={`brand-item-${i}`}>
                     <div className="flex items-start justify-between">
                       {b.image_url ? (
-                        <img src={b.image_url} alt={`Logo da marca ${b.name}`} className="h-12 w-auto object-contain" loading="lazy" />
+                        <img src={b.image_url} alt={`Logo da marca ${b.name}`} className="w-24 h-24 object-cover border border-[#E2E8F0]" loading="lazy" />
                       ) : (
                         <span className="w-14 h-14 border border-ink/15 group-hover:border-gold group-hover:bg-gold flex items-center justify-center font-display font-extrabold text-ink text-base tracking-tight transition-colors duration-500">
                           {brandMonogram(b.name)}
                         </span>
                       )}
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-slate2 border border-[#E2E8F0] px-3 py-1.5">
-                        {catName(b.category_id)}
-                      </span>
+                      {catName(b.category_id) && (
+                        <span className="text-[10px] uppercase tracking-[0.18em] text-slate2 border border-[#E2E8F0] px-3 py-1.5">
+                          {catName(b.category_id)}
+                        </span>
+                      )}
                     </div>
                     <h2 className="font-display font-bold text-2xl tracking-tight text-ink mt-8">{b.name}</h2>
-                    <p className="text-sm text-slate2 leading-relaxed mt-3 flex-1">
-                      {b.description || <span className="italic text-slate2/70">Descrição em atualização — conteúdo editável pelo painel.</span>}
-                    </p>
+                    <p className="text-sm text-slate2 leading-relaxed mt-3 flex-1">{b.description}</p>
                     <div className="flex flex-wrap gap-3 mt-8">
                       {b.catalog_url && (
                         <a href={b.catalog_url} target="_blank" rel="noopener noreferrer" data-testid={`brand-catalog-${i}`}
@@ -119,6 +122,13 @@ export default function Marcas() {
                     </div>
                   </article>
                 </Reveal>
+              ))}
+              {/* Células vazias para fechar a última linha da grade (evita faixa cinza) */}
+              {Array.from({ length: filtered.length % 2 }).map((_, i) => (
+                <div key={`fill-sm-${i}`} aria-hidden="true" className="hidden sm:block lg:hidden bg-white" />
+              ))}
+              {Array.from({ length: (3 - (filtered.length % 3)) % 3 }).map((_, i) => (
+                <div key={`fill-lg-${i}`} aria-hidden="true" className="hidden lg:block bg-white" />
               ))}
             </div>
           )}

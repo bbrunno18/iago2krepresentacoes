@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight, MessageCircle, PackageSearch, Search, PackageOpen } from "lucide-react";
 import { api } from "@/lib/api";
+import { fetchBrands, fetchCategories } from "@/lib/catalog";
 import { useSettings, waLink, usePageMeta, brandMonogram } from "@/lib/site";
 import { Reveal, MaskedLine } from "@/components/site/Reveal";
 
@@ -22,9 +23,9 @@ export default function Produtos() {
   usePageMeta("Produtos", "Catálogo de produtos para lojistas e atacadistas: busque por produto, filtre por marca e categoria e consulte condições comerciais com a 2K Representações.");
 
   useEffect(() => {
-    Promise.all([api.get("/brands"), api.get("/categories"), api.get("/catalog-files")])
-      .then(([b, c, f]) => { setBrands(b.data); setCategories(c.data); setCatalogFiles(f.data); })
-      .catch(() => {});
+    fetchBrands().then(setBrands);
+    fetchCategories().then(setCategories);
+    api.get("/catalog-files").then(({ data }) => Array.isArray(data) && setCatalogFiles(data)).catch(() => {});
   }, []);
 
   useEffect(() => {
