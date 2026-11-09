@@ -60,6 +60,7 @@ export async function submitRequest(data) {
 
   const ok = res.ok && body && (body.success === true || body.success === "true");
   if (!ok) {
+    console.warn("[FormSubmit] resposta:", res.status, body);
     throw new Error("Não foi possível enviar sua solicitação. Tente novamente ou chame no WhatsApp.");
   }
   return body;
