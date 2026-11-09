@@ -32,7 +32,7 @@ const SEGMENTS = [
   { icon: Zap, label: "Materiais elétricos" },
   { icon: Sparkles, label: "Cosméticos e maquiagem" },
   { icon: Gift, label: "Presentes e decoração" },
-  { icon: Paintbrush, label: "Organização e limpeza" },
+  { icon: Paintbrush, label: "Organização" },
   { icon: ShoppingCart, label: "Supermercados" },
   { icon: Boxes, label: "Atacadistas e distribuidores" },
 ];

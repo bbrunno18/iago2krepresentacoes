@@ -14,7 +14,7 @@ export default function Marcas() {
   const [filter, setFilter] = useState("todas");
   const [loading, setLoading] = useState(true);
 
-  usePageMeta("Marcas Representadas", "Conheça as marcas representadas pela 2K Representações: utilidades domésticas, materiais elétricos, maquiagem, vidros, incensos, limpeza e mais para lojistas e atacadistas.");
+  usePageMeta("Marcas Representadas", "Conheça as marcas representadas pela 2K Representações: utilidades domésticas, materiais elétricos, maquiagem, vidros, incensos e mais para lojistas e atacadistas.");
 
   useEffect(() => {
     api.get("/categories")
