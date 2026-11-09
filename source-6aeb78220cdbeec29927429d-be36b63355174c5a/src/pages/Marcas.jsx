@@ -43,7 +43,7 @@ export default function Marcas() {
           </h1>
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.6 }}
             className="mt-6 text-base md:text-lg text-slate2 max-w-2xl leading-relaxed">
-            {brands.length} marcas representadas, organizadas por categoria. Filtre, conheça e solicite o catálogo de cada uma.
+            {settings.stat_brands || brands.length} marcas representadas, organizadas por categoria. Filtre, conheça e solicite o catálogo de cada uma.
           </motion.p>
         </div>
       </section>

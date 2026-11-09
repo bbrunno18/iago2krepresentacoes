@@ -191,12 +191,12 @@ export default function Home() {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.25 }}
               className="mt-14 flex items-center gap-8 text-sm text-slate2" data-testid="hero-proof">
               <div>
-                <span className="block font-display font-extrabold text-3xl text-ink tracking-tighter">{brands.length || "—"}</span>
+                <span className="block font-display font-extrabold text-3xl text-ink tracking-tighter">{settings.stat_brands || brands.length || "—"}</span>
                 <span className="text-xs uppercase tracking-[0.18em]">marcas representadas</span>
               </div>
               <span className="w-px h-10 bg-[#E2E8F0]" />
               <div>
-                <span className="block font-display font-extrabold text-3xl text-ink tracking-tighter">{categories.length || "—"}</span>
+                <span className="block font-display font-extrabold text-3xl text-ink tracking-tighter">{settings.stat_categories || categories.length || "—"}</span>
                 <span className="text-xs uppercase tracking-[0.18em]">categorias de produtos</span>
               </div>
               <span className="w-px h-10 bg-[#E2E8F0] hidden sm:block" />
@@ -387,13 +387,13 @@ export default function Home() {
           <div className="lg:col-span-5 grid grid-cols-2 gap-px bg-[#E8DCC0] border border-[#E8DCC0]">
             <Reveal className="bg-[#FAFAFA]">
               <div className="p-8 text-center" data-testid="trust-stat-brands">
-                <span className="block font-display font-extrabold text-5xl text-ink tracking-tighter">{brands.length || "—"}</span>
+                <span className="block font-display font-extrabold text-5xl text-ink tracking-tighter">{settings.stat_brands || brands.length || "—"}</span>
                 <span className="block text-xs uppercase tracking-[0.18em] text-slate2 mt-2">marcas representadas</span>
               </div>
             </Reveal>
             <Reveal delay={0.08} className="bg-[#FAFAFA]">
               <div className="p-8 text-center" data-testid="trust-stat-categories">
-                <span className="block font-display font-extrabold text-5xl text-ink tracking-tighter">{categories.length || "—"}</span>
+                <span className="block font-display font-extrabold text-5xl text-ink tracking-tighter">{settings.stat_categories || categories.length || "—"}</span>
                 <span className="block text-xs uppercase tracking-[0.18em] text-slate2 mt-2">categorias atendidas</span>
               </div>
             </Reveal>
