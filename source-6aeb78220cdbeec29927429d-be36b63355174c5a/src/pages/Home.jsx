@@ -245,7 +245,7 @@ export default function Home() {
                 <img src={GOODS_IMG} alt="Produtos embalados prontos para distribuição no atacado" className="w-full h-36 object-cover" loading="lazy" />
               </div>
               <p className="mt-3 text-[10px] uppercase tracking-[0.22em] text-gold-dark font-semibold">Catálogo completo</p>
-              <p className="font-display font-bold text-ink text-sm tracking-tight mt-1 leading-snug">Utilidades, elétricos, cosméticos, limpeza e mais.</p>
+              <p className="font-display font-bold text-ink text-sm tracking-tight mt-1 leading-snug">Utilidades, linha pet, cosméticos, papelaria e mais.</p>
             </motion.div>
             <motion.span
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 0.6 }}
