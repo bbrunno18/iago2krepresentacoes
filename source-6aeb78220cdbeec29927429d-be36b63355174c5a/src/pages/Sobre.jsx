@@ -41,13 +41,20 @@ export default function Sobre() {
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-14 items-start">
           <div className="lg:col-span-6">
             <Reveal>
+              <p className="text-xs uppercase tracking-[0.22em] text-gold-dark font-semibold mb-4">Nossa história</p>
               <p className="text-lg md:text-xl text-ink leading-relaxed font-medium">
-                {settings.about_text || "A 2K Representações atua como ponte entre fabricantes, importadores e compradores profissionais, com atendimento próximo, consultivo e personalizado."}
+                {settings.about_text || "Em 2016, nascia a Icaro Almeida e 2K Representações, com uma ideia simples: aproximar quem fabrica e importa de quem vende, com atendimento de verdade e parceria de longo prazo."}
               </p>
             </Reveal>
             <Reveal delay={0.12}>
               <p className="mt-6 text-base text-slate2 leading-relaxed">
-                Nosso trabalho é simplificar a compra no atacado: organizamos catálogos, apresentamos novidades e reposições e ajudamos o lojista a encontrar os produtos adequados para o seu público — de utilidades domésticas a materiais elétricos, cosméticos, itens de limpeza e muito mais.
+                Desde o início, apostamos no relacionamento. Visitamos, ouvimos e entendemos a realidade de cada loja para indicar o que realmente gira. Com o passar dos anos, essa dedicação transformou a empresa em uma referência: sólida, tradicional e com muita experiência de mercado.
+              </p>
+              <p className="mt-5 text-base text-slate2 leading-relaxed">
+                Hoje, atendemos grandes lojistas do Amazonas e de Roraima e reunimos um portfólio com mais de 20.000 itens, de utilidades domésticas e papelaria a brinquedos, linha pet, presentes e decoração, cosméticos e muito mais. Tudo pensado para abastecer lojas e distribuidoras, no varejo e no atacado.
+              </p>
+              <p className="mt-5 text-base text-slate2 leading-relaxed">
+                Nossa história é feita de clientes que voltam, marcas que confiam em nós e uma equipe que trata cada pedido como uma parceria. E ela continua sendo escrita a cada nova loja que abastecemos.
               </p>
             </Reveal>
             <Reveal delay={0.2}>
@@ -89,7 +96,6 @@ export default function Sobre() {
                     </div>
                   )}
                 </dl>
-                <p className="mt-6 text-xs text-slate2/70 italic">História, fundação, equipe e redes sociais: campos editáveis no painel administrativo.</p>
               </div>
             </Reveal>
           </div>
